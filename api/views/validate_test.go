@@ -1,27 +1,23 @@
 package views
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
 
-func Route() http.Handler {
-	r := mux.NewRouter()
-	return r
-}
-
 func Test_200(t *testing.T) {
-	request, _ := http.NewRequest("GET", "/validate/contato@henriquelopes.com.br", nil)
+	var req = `{"emails":["contato@henriquelopes.com.br"]}`
+	var data = []byte(req)
+
+	request, _ := http.NewRequest("POST", "/validate/", bytes.NewBuffer(data))
 
 	record := httptest.NewRecorder()
-
-	route := mux.NewRouter()
-	route.HandleFunc("/validate/{email}", EmailHandler).Methods("GET")
-	route.ServeHTTP(record, request)
+	handler := http.HandlerFunc(EmailHandler)
+	handler.ServeHTTP(record, request)
 
 	assert.Equal(t, record.Code, http.StatusOK)
 	assert.Equal(t, record.Header().Get("Content-Type"), "application/json")

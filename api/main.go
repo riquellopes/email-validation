@@ -9,5 +9,5 @@ import (
 func main() {
 	route := mux.NewRouter()
 
-	route.HandleFunc("/validate/{email}", views.EmailHandler).Methods("GET")
+	route.HandleFunc("/validate/", views.EmailHandler).Methods("POST")
 }
